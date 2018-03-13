@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="humanface.pwc.com.facesign_face.discernface.MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <SurfaceView
+            android:id="@+id/surfaceView_mainAty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <humanface.pwc.com.facesign_face.util.DrawFacesView
+            android:id="@+id/surfaceView_drawface_mainAty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+    <Button
+        android:id="@+id/bu_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:text="开始"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        />
+</RelativeLayout>

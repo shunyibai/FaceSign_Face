@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="humanface.pwc.com.facesign_face">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:name=".MyApplication"
+        android:theme="@style/AppTheme">
+        <activity android:name=".discernface.MainActivity">
+        </activity>
+        <activity android:name=".UploadActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity android:name=".discernface.FaceSetActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            >
+
+        </activity>
+        <activity android:name=".UploadHttpImgActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            />
+        <provider
+            android:authorities="humanface.pwc.com.facesign_face.fileProvider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path"
+                />
+        </provider>
+        <activity android:name=".UploadSelectActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".UploadHomeActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            >
+            <!--启动页-->
+
+        </activity>
+        <activity android:name=".CreatePeopleActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            >
+
+        </activity>
+        <activity android:name=".UploadHttpCompareImgActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity android:name=".MegiveActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name=".CompareBitmapActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name=".SearchFileImgActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            ></activity>DetailLogActivity
+        <activity android:name=".DetailLogActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            ></activity>
+        <activity android:name=".ErrorActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            ></activity>
+        <activity android:name=".DetectImgActvity"
+                  android:excludeFromRecents="true"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"
+            >
+
+        </activity>
+        <activity android:name=".RecognizeTextActvity"
+                  android:excludeFromRecents="true"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"></activity>
+        <activity android:name=".SelectImgActivity"
+                  android:excludeFromRecents="true"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            </activity>
+    </application>
+
+</manifest>

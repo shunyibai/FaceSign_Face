@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+    <Button
+        android:id="@+id/bu_toMegive_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="活体检测" />
+
+    <Button
+        android:id="@+id/bu_select_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查看Faceset" />
+
+    <Button
+        android:id="@+id/bu_file_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本地上传" />
+
+    <Button
+        android:id="@+id/bu_staffid_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Staffid上传" />
+
+    <Button
+        android:id="@+id/bu_createFaceset_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="创建FaceSet" />
+
+    <Button
+        android:id="@+id/bu_clearFace_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="清理人脸集合" />
+
+    <LinearLayout
+        android:id="@+id/ll_delete_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_staffid_uploadHomeAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="FaceToken"
+            android:text="56011230a4ac48406ba4ebb9a9e6e71e" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/bu_cleartext_uploadHomeAty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="清除文字" />
+            <Button
+                android:id="@+id/bu_clearOneFace_uploadHomeAty"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="删除" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bu_face_photograph_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="相机采集人脸" />
+
+    <Button
+        android:id="@+id/bu_face_compare_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="集合中搜素人脸（Staffid）" />
+
+    <Button
+        android:id="@+id/bu_face_comparebitmap_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2张人脸对比"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/bu_searchFile_uploadHomeAty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="集合中搜素人脸（本地图片）" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查看上传失败信息"
+        android:id="@+id/bu_error_uploadHomeAty"
+        />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Detect接口"
+                android:id="@+id/bu_detect_uploadHomeAty"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="检测文字"
+                android:id="@+id/bu_recoginze_uploadHomeAty"
+                />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

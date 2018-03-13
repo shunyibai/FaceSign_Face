@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/et_faceset_token_uploadlistAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/bu_updete_faceset_token_uploadlistAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="修改Faceset_token"
+            />
+        <Button
+            android:id="@+id/bu_detection_uploadAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="刷新"
+            />
+        <TextView
+            android:id="@+id/tv_faceDetail_uploadListAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/lv_uploadAty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_uploadAty"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+</RelativeLayout>

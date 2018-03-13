@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/et_staffidOne_uploadAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Staffid"
+            android:text="CN"
+            android:inputType="number"
+            />
+        <Button
+            android:id="@+id/bu_oneStaffid_uploadAty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="单个上传"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/et_uploadName_uploadStaffidAty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="本次上传备注名"
+                />
+            <Button
+                android:id="@+id/bu_upload_uploadAty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="批量上传（暂时停用）"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_uploadAty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_uploadAty"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+</RelativeLayout>

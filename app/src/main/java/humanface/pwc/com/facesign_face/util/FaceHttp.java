@@ -212,6 +212,7 @@ public class FaceHttp {
         params.addHeader("Content-Type","application/x-www-form-urlencoded");
         params.addBodyParameter("image", base64Img);
         x.http().post(params, xCreateUserTokenCallBack);
+        //重新提交一遍
     }
 
 }

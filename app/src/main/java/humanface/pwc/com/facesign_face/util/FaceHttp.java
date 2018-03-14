@@ -50,7 +50,7 @@ public class FaceHttp {
      * @param imgStr
      * @param xCompareCallBack
      */
-    public static void searchFace1(String imgStr, Callback.CommonCallback<String> xCompareCallBack){
+    public static void searchFace(String imgStr, Callback.CommonCallback<String> xCompareCallBack){
         RequestParams params = new RequestParams("https://api-cn.faceplusplus.com/facepp/v3/search");
         params.addBodyParameter("api_key", Util.API_KEY);
         params.addBodyParameter("api_secret", Util.API_SECRET);
@@ -198,20 +198,19 @@ public class FaceHttp {
         params.addBodyParameter("image_file", file);
         x.http().post(params, xCreateUserTokenCallBack);
     }
+
     /**
-     * 把图片中的文字弄出来
-     * @param file
+     * 把图片中的文字显示出来（baidu）
+     * @param access_token
+     * @param base64Img
      * @param xCreateUserTokenCallBack
      */
-    public static void recognizeText(String access_token,String base64Img, Callback.CommonCallback<String> xCreateUserTokenCallBack){
+    public static void recognizeBaiduText(String access_token,String base64Img, Callback.CommonCallback<String> xCreateUserTokenCallBack){
         String path = "https://aip.baidubce.com/rest/2.0/ocr/v1/general?access_token=";
         path = path+access_token;
         RequestParams params = new RequestParams(path);
         params.addHeader("Content-Type","application/x-www-form-urlencoded");
-        params.addBodyParameter("image", Util.API_KEY);
-        params.addBodyParameter("api_secret", Util.API_SECRET);
-        params.addBodyParameter("image_file", file);
-
+        params.addBodyParameter("image", base64Img);
         x.http().post(params, xCreateUserTokenCallBack);
     }
 

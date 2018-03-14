@@ -10,7 +10,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="相机"
-
+            android:visibility="gone"
             />
     <Button
         android:id="@+id/bu_toCamera_dialogFrmg"
@@ -18,5 +18,10 @@
         android:layout_height="wrap_content"
         android:text="相册"
         android:layout_toRightOf="@id/bu_toPhoto_dialogFrmg"
+        android:visibility="gone"
         />
+    <TextView
+        android:id="@+id/tv_cardText_dialogFrag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

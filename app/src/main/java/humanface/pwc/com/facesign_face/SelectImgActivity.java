@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,25 +19,32 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.util.List;
 
+import humanface.pwc.com.facesign_face.bean.WordBaidu;
 import humanface.pwc.com.facesign_face.util.AuthService;
+import humanface.pwc.com.facesign_face.util.FaceHttp;
 import humanface.pwc.com.facesign_face.util.L;
+import humanface.pwc.com.facesign_face.util.XutilsCallback;
 
 /**
  * Created by Shunyi Bai on 09/03/2018.
@@ -46,6 +54,8 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
     private ImageView iv;
     int  IMAGE_MAX_SIZE = 1024;
     private String access_token;
+    private String path;
+    private TextView tvWait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +63,30 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_selectimg);
         iv = (ImageView) findViewById(R.id.iv_photo_selectImgAty);
         Button button = (Button) findViewById(R.id.bu_submit_selectImgAty);
+        tvWait = (TextView)findViewById(R.id.tv_wait_selectImgAty);
         button.setOnClickListener(this);
         iv.setOnClickListener(this);
         requestAllPermissionsIfNeed();
-        new UsertokenAsyncTask().execute();
+        SharedPreferences sharedPreferences = getSharedPreferences("BaiduAcctoken",MODE_PRIVATE);
+        access_token = sharedPreferences.getString("access_token","");
+        if(TextUtils.isEmpty(access_token)){
+            new UsertokenAsyncTask().execute();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode!=RESULT_OK){
+            return;
+        }
         Uri uri = data.getData();
         String[] pro = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(uri,pro,null,null,null);
         int cou = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        String filepath = cursor.getString(cou);
-        File file = new File(filepath);
+        path = cursor.getString(cou);
+        File file = new File(path);
         Bitmap bitmap = decodeFile(file);
         iv.setImageBitmap(bitmap);
 
@@ -135,11 +153,57 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
                 startActivityForResult(intent, 1);
                 break;
             case R.id.bu_submit_selectImgAty:
-                showDialogFragment("你好");
+//                showDialogFragment("你好");
+                if(TextUtils.isEmpty(path)){
+                    return;
+                }
+                tvWait.setVisibility(View.VISIBLE);
+                String base64img = encodeBase64File(path);
+                FaceHttp.recognizeBaiduText(access_token,base64img,setUseridCallback);
                 break;
         }
     }
-    private void showDialogFragment(String text){
+    /**
+     * 给人脸添加userid
+     */
+    private XutilsCallback setUseridCallback = new XutilsCallback(){
+
+        @Override
+        public void onSuccess(String result) {
+            if(TextUtils.isEmpty(result)){
+                return;
+            }
+            StringBuilder contentStr = new StringBuilder();
+            Log.i("Upload","onSuccess result-->" + result);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                int wordnum = jsonObject.optInt("words_result_num");
+                if(wordnum>0){
+                    String wordsStr = jsonObject.optString("words_result");
+                    List<WordBaidu> wordList = JSON.parseArray(wordsStr, WordBaidu.class);
+                    for(WordBaidu word: wordList){
+                        if(word!=null){
+                            String words = word.getWords();
+                            if(!TextUtils.isEmpty(words)){
+                                contentStr.append(words);
+                                contentStr.append("\n");
+                            }
+                        }
+                    }
+                    showDialogFragment(contentStr.toString());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFinished() {
+            tvWait.setVisibility(View.GONE);
+            super.onFinished();
+        }
+    };
+    private void showDialogFragment(final String text){
         if(TextUtils.isEmpty(text)){
             return;
         }
@@ -149,6 +213,8 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
             public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
                 getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
                 View view = inflater.inflate(R.layout.dialog_fragment_selectphoto,container);
+                TextView tv = (TextView) view.findViewById(R.id.tv_cardText_dialogFrag);
+                tv.setText(text);
                 return view;
             }
         };
@@ -162,6 +228,10 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
                 return;
             }
             access_token = s;
+            SharedPreferences sharedPreferences = getSharedPreferences("BaiduAcctoken",MODE_PRIVATE);
+            SharedPreferences.Editor editor  = sharedPreferences.edit();
+            editor.putString("access_token",access_token);
+            editor.commit();
             super.onPostExecute(s);
         }
 
@@ -174,6 +244,7 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
                 access_token = jsonObject.optString("access_token");
             } catch (JSONException e) {
                 e.printStackTrace();
+                access_token = jsonStr;
             }
             return access_token;
         }
@@ -184,12 +255,20 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
             super.onPreExecute();
         }
     };
-    public static String encodeBase64File(String path) throws Exception {
+    public static String encodeBase64File(String path) {
         File  file = new File(path);
-        FileInputStream inputFile = new FileInputStream(file);
-        byte[] buffer = new byte[(int)file.length()];
-        inputFile.read(buffer);
-        inputFile.close();
+        byte[] buffer = null;
+        try {
+            FileInputStream inputFile = new FileInputStream(file);
+            buffer = new byte[(int)file.length()];
+            inputFile.read(buffer);
+            inputFile.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return Base64.encodeToString(buffer, Base64.DEFAULT);
     }
 

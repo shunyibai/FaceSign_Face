@@ -5,9 +5,13 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +19,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -45,17 +51,20 @@ import humanface.pwc.com.facesign_face.util.AuthService;
 import humanface.pwc.com.facesign_face.util.FaceHttp;
 import humanface.pwc.com.facesign_face.util.L;
 import humanface.pwc.com.facesign_face.util.XutilsCallback;
+import humanface.pwc.com.facesign_face.view.CameraOrAlbumDialog;
 
 /**
  * Created by Shunyi Bai on 09/03/2018.
  */
 
-public class SelectImgActivity extends Activity implements View.OnClickListener{
+public class SelectImgActivity extends Activity implements View.OnClickListener,CameraOrAlbumDialog.OnCameraOnClick{
     private ImageView iv;
     int  IMAGE_MAX_SIZE = 1024;
     private String access_token;
     private String path;
     private TextView tvWait;
+    private CameraOrAlbumDialog cameraOrAlbumDialog;
+    private File imgFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +76,7 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
         button.setOnClickListener(this);
         iv.setOnClickListener(this);
         requestAllPermissionsIfNeed();
+        cameraOrAlbumDialog = new CameraOrAlbumDialog();
         SharedPreferences sharedPreferences = getSharedPreferences("BaiduAcctoken",MODE_PRIVATE);
         access_token = sharedPreferences.getString("access_token","");
         if(TextUtils.isEmpty(access_token)){
@@ -80,15 +90,28 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
         if(resultCode!=RESULT_OK){
             return;
         }
-        Uri uri = data.getData();
-        String[] pro = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri,pro,null,null,null);
-        int cou = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        path = cursor.getString(cou);
-        File file = new File(path);
-        Bitmap bitmap = decodeFile(file);
-        iv.setImageBitmap(bitmap);
+        switch (requestCode){
+            case 1:
+                Uri uri = data.getData();
+                String[] pro = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(uri,pro,null,null,null);
+                int cou = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                path = cursor.getString(cou);
+                File file = new File(path);
+                Bitmap bitmap = decodeFile(file);
+                iv.setImageBitmap(bitmap);
+                break;
+            case 2:
+                if(imgFile==null){
+                    return;
+                }
+                path = imgFile.toString();
+                Bitmap bitmap1 = decodeFile(imgFile);
+                iv.setImageBitmap(bitmap1);
+                break;
+        }
+
 
 
     }
@@ -100,6 +123,13 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
 
             } else {
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            }
+        }
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
             }
         }
     }
@@ -147,10 +177,7 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_photo_selectImgAty:
-                Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        "image/*");
-                startActivityForResult(intent, 1);
+                cameraOrAlbumDialog.show(getFragmentManager(),"ca");
                 break;
             case R.id.bu_submit_selectImgAty:
 //                showDialogFragment("你好");
@@ -219,6 +246,64 @@ public class SelectImgActivity extends Activity implements View.OnClickListener{
             }
         };
         dialogFragment.show(getFragmentManager(),text);
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which){
+            case 0:
+                toCamera();
+                break;
+            case 1:
+                Intent intent = new Intent(Intent.ACTION_PICK, null);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        "image/*");
+                startActivityForResult(intent, 1);
+                break;
+        }
+    }
+    private void toCamera(){
+//        if(!hasPermissionInManifest(this,"android.permission-group.CAMERA")){
+//            return;
+//        }
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString();
+        imgFile = new File(path,"baiduimgpath.png");
+        Uri uriImg = null;
+        if(Build.VERSION.SDK_INT>=24){
+            uriImg = FileProvider.getUriForFile(this,"humanface.pwc.com.facesign_face.fileProvider",imgFile);
+        }else{
+            uriImg = Uri.fromFile(imgFile);
+        }
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //授权应用的
+        List<ResolveInfo> resInfoList = getPackageManager()
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            grantUriPermission(packageName, uriImg, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,uriImg);
+        startActivityForResult(intent, 2);
+    }
+    public boolean hasPermissionInManifest(Context context, String permissionName) {
+        final String packageName = context.getPackageName();
+        try {
+            final PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
+            final String[] declaredPermisisons = packageInfo.requestedPermissions;
+            if (declaredPermisisons != null && declaredPermisisons.length > 0) {
+                for (String p : declaredPermisisons) {
+                    if (p.equals(permissionName)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        }
+        return false;
     }
     class UsertokenAsyncTask extends AsyncTask<String,ObjectInput,String>{
         @Override
